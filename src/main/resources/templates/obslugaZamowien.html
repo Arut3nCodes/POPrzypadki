@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Obsługa Zamówień</title>
+</head>
+<body>
+<tbody>
+<tr th:each="zamowienie : ${zamowienia}">
+    <td th:text="${zamowienie.Id_Z}"></td>
+    <td th:text="${zamowienie.Id_K}"></td>
+    <td th:text="${zamowienie.Id_Pr}"></td>
+    <td th:text="${zamowienie.Id_Pl}"></td>
+    <td th:text="${zamowienie.Status_zamowienia}"></td>
+    <td th:text="${zamowienie.Data_zamowienia}"></td>
+    <td th:text="${zamowienie.KwotaDoZaplaty}"></td>
+</tr>
+</tbody>
+</body>
+</html>

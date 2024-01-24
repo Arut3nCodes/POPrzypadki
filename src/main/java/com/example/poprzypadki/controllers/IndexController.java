@@ -1,4 +1,4 @@
-package com.example.poprzypadki;
+package com.example.poprzypadki.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
