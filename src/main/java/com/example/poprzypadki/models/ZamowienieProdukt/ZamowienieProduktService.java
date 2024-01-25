@@ -15,7 +15,7 @@ public class ZamowienieProduktService {
         this.zamowienieProduktRepository = zamowienieProduktRepository;
     }
 
-    public Iterable<ZamowienieProdukt> getAllZamowienieProdukty() {
+    public List<ZamowienieProdukt> getAllZamowienieProdukty() {
         return zamowienieProduktRepository.findAll();
     }
 

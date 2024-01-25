@@ -5,6 +5,8 @@ import com.example.poprzypadki.models.Produkt.ProduktRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProduktService {
     private final ProduktRepository produktRepository;
@@ -14,7 +16,7 @@ public class ProduktService {
         this.produktRepository = produktRepository;
     }
 
-    public Iterable<Produkt> getAllProdukty() {
+    public List<Produkt> getAllProdukty() {
         return produktRepository.findAll();
     }
 
