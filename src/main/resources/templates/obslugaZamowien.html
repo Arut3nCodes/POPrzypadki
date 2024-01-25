@@ -3,18 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <title>Obsługa Zamówień</title>
+    <link rel="stylesheet" href="/css/obslugaZamowienCSS.css">
 </head>
-<body>
-<tbody>
-<tr th:each="zamowienie : ${zamowienia}">
-    <td th:text="${zamowienie.Id_Z}"></td>
-    <td th:text="${zamowienie.Id_K}"></td>
-    <td th:text="${zamowienie.Id_Pr}"></td>
-    <td th:text="${zamowienie.Id_Pl}"></td>
-    <td th:text="${zamowienie.Status_zamowienia}"></td>
-    <td th:text="${zamowienie.Data_zamowienia}"></td>
-    <td th:text="${zamowienie.KwotaDoZaplaty}"></td>
-</tr>
-</tbody>
-</body>
+    <body>
+        <div class="contentContainer">
+            <header>
+                <img alt="to mial byc obrazek">
+                <h1>System obsługi zamówień i reklamacji</h1>
+                <p>Placeholder For LoginControl</p>
+            </header>
+            <div class="contentDiv">
+                <div class="leftDiv">
+                </div>
+                <div class="tableDiv">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="id">ID zamówienia</th>
+                            <th class="statusZam">Status zamówienia</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="zamowienie: ${zamowienia}"  th:attr="data-id=${zamowienie.getId_Z()}" onclick="fetchDetails(this)">
+                                <td class="id" th:text="'Zamówienie #' + ${zamowienie.getId_Z()}"></td>
+                                <td class="statusZam" th:text="${zamowienie.getStatus_zamowienia()}"></td>
+                            </tr>
+                        <tbody>
+                    </table>
+                </div>
+                <div id="detailsDiv">
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function fetchDetails(row) {
+                let id_Z = row.getAttribute('data-id');
+                fetch(`/pracownik/zamowienia/${id_Z}`)
+                    .then(response => response.json())
+                    .then(data => displayDetails(data))
+                    .catch(error => console.error('Error fetching details:', error));
+            }
+
+
+
+            function displayDetails(details) {
+                const detailsDiv = document.getElementById('detailsDiv');
+                detailsDiv.innerHTML = '';
+                const propertyOrder = ['id_Z', 'data_zamowienia', 'lista_artykulow', 'status_zamowienia'];
+
+                var object = details[0][0]
+
+                for (const property of propertyOrder) {
+                    if (property === 'lista_artykulow') {
+                        var llabel = document.createElement("label")
+                        llabel.htmlFor = "checkableList";
+                        llabel.style.fontWeight = 'bold';
+                        llabel.textContent = "Lista produktów: "
+                        var checkableList = document.createElement("ul")
+                        checkableList.id = "checkableList"
+
+                        for (var i = 0; i < details.length; i++) {
+                            var listItem = document.createElement("li");
+                            var checkbox = document.createElement("input");
+                            checkbox.type = "checkbox";
+                            checkbox.id = "item" + i;
+                            checkbox.name = "items";
+                            checkbox.value = i;
+                            var label = document.createElement("label");
+                            label.htmlFor = "item" + i;
+                            label.textContent = "Produkt: " + details[i][1] +
+                                ", Ilość: " + details[i][2];
+                            listItem.appendChild(checkbox);
+                            listItem.appendChild(label);
+                            checkableList.appendChild(listItem);
+                        }
+                        detailsDiv.appendChild(llabel)
+                        detailsDiv.appendChild(checkableList);
+                    } else if (property === "status_zamowienia") {
+                        var label = document.createElement("label")
+                        label.htmlFor = "selectBox"
+                        label.textContent = "Status zamówienia: "
+
+                        detailsDiv.appendChild(label)
+
+                        var selectBox = document.createElement("select")
+                        detailsDiv.appendChild(selectBox)
+                        selectBox.onchange = changeSelectedOption
+                        selectBox.id = "selectBox"
+                        selectBox.name = "selectBox"
+                        selectBox.setAttribute('rownum', details[0][0]['id_Z'])
+                        var list = ["NIEOPLACONE", "OPLACONE", "PRZYGOTOWANE", "WYSLANE"]
+                        for (var num = 0; num < list.length; num++) {
+                            var option = document.createElement("option")
+                            option.value = list[num]
+                            option.textContent = list[num]
+                            if (list[num] == object['status_zamowienia']) {
+                                option.selected = "selected"
+                            }
+                            selectBox.appendChild(option)
+                        }
+
+
+
+
+
+
+                    }
+
+                    else {
+                        const label = document.createElement('span');
+                        label.textContent = `${property}: `;
+                        label.style.fontWeight = 'bold';
+
+                        const detailValue = document.createElement('span');
+                        detailValue.textContent = object[property];
+
+                        detailsDiv.appendChild(label);
+                        detailsDiv.appendChild(detailValue);
+                        detailsDiv.appendChild(document.createElement('br'));
+                    }
+
+                }
+
+                function changeSelectedOption() {
+                    var zamowienieStatusSelect = document.getElementById("selectBox");
+                    var selectedStatus = zamowienieStatusSelect.options[zamowienieStatusSelect.selectedIndex].value;
+                    console.log(selectedStatus)
+                    if (selectedStatus != null) {
+                        var zamowienieId = zamowienieStatusSelect.getAttribute('rowNum')
+
+                        // Send AJAX request to update status on the server
+                        fetch(`/pracownik/zamowienia/${zamowienieId}/updateStatus?newStatus=${selectedStatus}`, {
+                            method: 'PUT',
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    console.log("Status updated successfully.");
+                                } else {
+                                    console.error("Error updating status.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error updating status:", error);
+                            });
+                    }
+                }
+            }
+        </script>
+
+    </body>
 </html>
+

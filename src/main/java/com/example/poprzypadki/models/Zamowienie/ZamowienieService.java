@@ -1,7 +1,9 @@
-package com.example.poprzypadki.models;
+package com.example.poprzypadki.models.Zamowienie;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ZamowienieService {
@@ -27,5 +29,16 @@ public class ZamowienieService {
 
     public void deleteZamowienieById(int id) {
         zamowienieRepository.deleteById(id);
+    }
+
+    public void updateStatus(int id, String newStatus) {
+        Optional<Zamowienie> optionalZamowienie = zamowienieRepository.findById(id);
+        if (optionalZamowienie.isPresent()) {
+            Zamowienie zamowienie = optionalZamowienie.get();
+            zamowienie.setStatus_zamowienia(newStatus);
+            zamowienieRepository.save(zamowienie);
+        } else {
+            throw new IllegalArgumentException("Zamowienie not found with id: " + id);
+        }
     }
 }

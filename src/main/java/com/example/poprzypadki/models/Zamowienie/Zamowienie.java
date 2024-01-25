@@ -1,7 +1,8 @@
-package com.example.poprzypadki.models;
+package com.example.poprzypadki.models.Zamowienie;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 @Data
 public class Zamowienie {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int Id_Z;
     int Id_K;
     int Id_Pr;
